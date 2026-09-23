@@ -6,6 +6,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
+/**
+ * Tipografía principal de Material 3 usada por la aplicación.
+ *
+ * Para esta práctica únicamente se personaliza bodyLarge; los demás
+ * estilos conservan los valores predeterminados de Material 3.
+ */
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
