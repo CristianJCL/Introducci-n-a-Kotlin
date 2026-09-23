@@ -1,3 +1,4 @@
+// Repositorios usados para localizar los plugins de Gradle.
 pluginManagement {
     repositories {
         google()
@@ -6,6 +7,7 @@ pluginManagement {
     }
 }
 
+// Centraliza los repositorios de dependencias para todos los módulos.
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -14,5 +16,6 @@ dependencyResolutionManagement {
     }
 }
 
+// Nombre del proyecto y registro del único módulo de la aplicación.
 rootProject.name = "BasicStateCodelab"
 include ':app'
