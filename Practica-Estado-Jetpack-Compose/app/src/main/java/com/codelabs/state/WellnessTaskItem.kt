@@ -13,6 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * Dibuja una fila de tarea.
+ *
+ * El componente no almacena estado propio: recibe el valor del checkbox
+ * y expone callbacks para notificar cambios o solicitar la eliminación.
+ */
 @Composable
 fun WellnessTaskItem(
     taskName: String,
@@ -25,18 +31,26 @@ fun WellnessTaskItem(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // El texto ocupa el espacio disponible antes de los controles.
         Text(
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 16.dp),
             text = taskName
         )
+
+        // Refleja el estado recibido y comunica cualquier cambio al padre.
         Checkbox(
             checked = checked,
             onCheckedChange = onCheckedChange
         )
+
+        // Permite solicitar la eliminación de la tarea actual.
         IconButton(onClick = onClose) {
-            Icon(Icons.Filled.Close, contentDescription = "Close")
+            Icon(
+                imageVector = Icons.Filled.Close,
+                contentDescription = "Close"
+            )
         }
     }
 }
