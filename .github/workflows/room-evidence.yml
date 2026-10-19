@@ -69,50 +69,40 @@ jobs:
               text = node.attrib.get("text","")
               desc = node.attrib.get("content-desc","")
               if target.lower() in text.lower() or target.lower() in desc.lower():
-                  m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", node.attrib["bounds"])
-                  if not m:
+                  match = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", node.attrib.get("bounds",""))
+                  if not match:
                       continue
-                  x1,y1,x2,y2 = map(int,m.groups())
+                  x1,y1,x2,y2 = map(int,match.groups())
                   x,y = (x1+x2)//2, (y1+y2)//2
                   subprocess.run(["adb","shell","input","tap",str(x),str(y)], check=True)
                   print(f"Tapped {target} at {x},{y}")
                   sys.exit(0)
           print(f"Target not found: {target}")
-          subprocess.run(["cat","window.xml"])
           sys.exit(1)
           PY
 
       - name: Run Room tests and capture emulator evidence
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 35
+          api-level: 29
           arch: x86_64
-          profile: pixel_6
+          profile: pixel_2
           disable-animations: true
           script: |
-            set -e
-            cd inventory
-            chmod +x gradlew
-
-            ./gradlew connectedDebugAndroidTest --stacktrace | tee ../connected-test.log
-            ./gradlew installDebug installDebugAndroidTest
-
-            adb shell am instrument -w -e class com.example.inventory.SeedDatabaseTest com.example.inventory.test/androidx.test.runner.AndroidJUnitRunner | tee ../seed-test.log
-
+            chmod +x inventory/gradlew
+            ./inventory/gradlew -p inventory connectedDebugAndroidTest --stacktrace | tee connected-test.log
+            ./inventory/gradlew -p inventory installDebug installDebugAndroidTest
+            adb shell am instrument -w -e class com.example.inventory.SeedDatabaseTest com.example.inventory.test/androidx.test.runner.AndroidJUnitRunner | tee seed-test.log
             adb shell am force-stop com.example.inventory
             adb shell monkey -p com.example.inventory -c android.intent.category.LAUNCHER 1
             sleep 4
-            adb exec-out screencap -p > ../01_inventory_home.png
-
-            cd ..
+            adb exec-out screencap -p > 01_inventory_home.png
             python3 tap_text.py Apples
             sleep 2
             adb exec-out screencap -p > 02_item_details_before.png
-
             python3 tap_text.py Sell
             sleep 2
             adb exec-out screencap -p > 03_item_details_after_sell.png
-
             adb shell am force-stop com.example.inventory
             adb shell monkey -p com.example.inventory -c android.intent.category.LAUNCHER 1
             sleep 3
